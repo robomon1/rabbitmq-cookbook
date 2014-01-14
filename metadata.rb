@@ -53,8 +53,7 @@ attribute "rabbitmq/mnesiadir",
 
 attribute "rabbitmq/cluster",
   :display_name => "RabbitMQ clustering",
-  :description => "Whether to activate clustering.",
-  :default => "no"
+  :description => "Whether to activate clustering. Note: Set to 'No Value/Ignore' in Rightscale if deploy fails."
 
 attribute "rabbitmq/cluster_config",
   :display_name => "RabbitMQ clustering configuration file",
