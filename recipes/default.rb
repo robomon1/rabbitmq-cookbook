@@ -39,6 +39,8 @@ when "debian"
       key "http://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
       not_if { node['rabbitmq']['use_distro_version'] }
       action :add
+      ## Adds the following line to /etc/apt/sources.list.d/rabbitmq.list
+      ## deb     http://www.rabbitmq.com/debian/ testing main
     end
 
     # NOTE: The official RabbitMQ apt repository has only the latest version
@@ -89,12 +91,22 @@ when "smartos"
 
 end
 
+service node['rabbitmq']['service_name'] do
+  action :start
+end
+
+log "  Stopping RabbitMQ to copy templates and if necessary setup clustering."
+service "stop #{node['rabbitmq']['service_name']}" do
+  service_name node['rabbitmq']['service_name']
+  action :stop
+end
+
 template "#{node['rabbitmq']['config_root']}/rabbitmq-env.conf" do
   source "rabbitmq-env.conf.erb"
   owner "root"
   group "root"
   mode 00644
-  #notifies :restart, "service[#{node['rabbitmq']['service_name']}]"
+  notifies :start, "service[#{node['rabbitmq']['service_name']}]"
 end
 
 template "#{node['rabbitmq']['config_root']}/rabbitmq.config" do
@@ -102,7 +114,7 @@ template "#{node['rabbitmq']['config_root']}/rabbitmq.config" do
   owner "root"
   group "root"
   mode 00644
-  #notifies :restart, "service[#{node['rabbitmq']['service_name']}]"
+  notifies :start, "service[#{node['rabbitmq']['service_name']}]"
 end
 
 if File.exists?(node['rabbitmq']['erlang_cookie_path'])
@@ -125,7 +137,7 @@ if node['rabbitmq']['cluster'] and node['rabbitmq']['erlang_cookie'] != existing
     owner "rabbitmq"
     group "rabbitmq"
     mode 00400
-    #notifies :start, "service[#{node['rabbitmq']['service_name']}]", :immediately
+    notifies :start, "service[#{node['rabbitmq']['service_name']}]"
   end
 
 end
