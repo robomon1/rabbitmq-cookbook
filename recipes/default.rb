@@ -137,10 +137,11 @@ end
 ## where it can daemonize properly. -Kevin (thanks to Daniel DeLeo for the help)
 
 service node['rabbitmq']['service_name'] do
-  start_command "setsid /etc/init.d/rabbitmq-server start"
-  stop_command "setsid /etc/init.d/rabbitmq-server stop"
-  restart_command "setsid /etc/init.d/rabbitmq-server restart"
-  status_command "setsid /etc/init.d/rabbitmq-server status"
+  #start_command "setsid /etc/init.d/rabbitmq-server start"
+  #stop_command "setsid /etc/init.d/rabbitmq-server stop"
+  #restart_command "setsid /etc/init.d/rabbitmq-server restart"
+  #status_command "setsid /etc/init.d/rabbitmq-server status"
+  service_name "rabbitmq-server"
   supports :status => true, :restart => true
   action [ :enable, :start ]
   not_if { platform?('smartos') }
