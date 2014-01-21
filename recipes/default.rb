@@ -113,17 +113,19 @@ end
 
 if node['rabbitmq']['cluster'] and node['rabbitmq']['erlang_cookie'] != existing_erlang_key
 
+  Chef::Log.info "Stopping RabbitMQ to setup clustering."
   service "stop #{node['rabbitmq']['service_name']}" do
     service_name node['rabbitmq']['service_name']
     action :stop
   end
 
+  Chef::Log.info "Creating new erlang cookie for clustering."
   template node['rabbitmq']['erlang_cookie_path'] do
     source "doterlang.cookie.erb"
     owner "rabbitmq"
     group "rabbitmq"
     mode 00400
-    notifies :start, "service[#{node['rabbitmq']['service_name']}]", :immediately
+    notifies :restart, "service[#{node['rabbitmq']['service_name']}]", :immediately
   end
 
 end
