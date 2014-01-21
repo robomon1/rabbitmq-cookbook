@@ -186,9 +186,7 @@
   "groupings": {
   },
   "recipes": {
-    "rabbitmq": "Install and configure RabbitMQ",
-    "rabbitmq::cluster": "Set up RabbitMQ clustering.",
-    "rabbitmq::default": "Installs and configures rabbitmq",
+    "rabbitmq": "Installs and configures RabbitMQ",
     "rabbitmq::do_setup_monitoring": "Configures collectd monitoring for queues"
   },
   "version": "1.7.0"

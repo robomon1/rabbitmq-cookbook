@@ -4,8 +4,10 @@ maintainer_email  "cookbooks@opscode.com"
 license           "Apache 2.0"
 description       "Installs and configures RabbitMQ server"
 version           "1.7.0"
-recipe            "rabbitmq", "Install and configure RabbitMQ"
-recipe            "rabbitmq::cluster", "Set up RabbitMQ clustering."
+#recipe            "rabbitmq::default", "Installs and configures rabbitmq"
+recipe            "rabbitmq", "Installs and configures RabbitMQ"
+#recipe            "rabbitmq::cluster", "Set up RabbitMQ clustering."
+recipe            "rabbitmq::do_setup_monitoring", "Configures collectd monitoring for queues"
 depends           "apt", ">= 1.4.4"
 depends           "yum", ">= 0.5.0"
 depends           "erlang", ">= 0.9"
@@ -17,9 +19,6 @@ end
 %w{ubuntu debian redhat centos scientific amazon fedora oracle smartos}.each do |os|
   supports os
 end
-
-recipe "rabbitmq::default", "Installs and configures rabbitmq"
-recipe "rabbitmq::do_setup_monitoring", "Configures collectd monitoring for queues"
 
 attribute "rabbitmq",
   :display_name => "RabbitMQ",
