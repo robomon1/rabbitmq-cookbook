@@ -125,7 +125,7 @@ if node['rabbitmq']['cluster'] and node['rabbitmq']['erlang_cookie'] != existing
     owner "rabbitmq"
     group "rabbitmq"
     mode 00400
-    notifies :restart, "service[#{node['rabbitmq']['service_name']}]", :immediately
+    notifies :start, "service[#{node['rabbitmq']['service_name']}]", :immediately
   end
 
 end
@@ -141,7 +141,6 @@ service node['rabbitmq']['service_name'] do
   #stop_command "setsid /etc/init.d/rabbitmq-server stop"
   #restart_command "setsid /etc/init.d/rabbitmq-server restart"
   #status_command "setsid /etc/init.d/rabbitmq-server status"
-  service_name "rabbitmq-server"
   supports :status => true, :restart => true
   action [ :enable, :start ]
   not_if { platform?('smartos') }
