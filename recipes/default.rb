@@ -91,13 +91,9 @@ when "smartos"
 
 end
 
-service node['rabbitmq']['service_name'] do
-  action :start
-end
-
 log "  Stopping RabbitMQ to copy templates and if necessary setup clustering."
-service "stop #{node['rabbitmq']['service_name']}" do
-  service_name node['rabbitmq']['service_name']
+service node['rabbitmq']['service_name'] do
+  supports :status => true, :start => true, :stop => true, :restart => true
   action :stop
 end
 
@@ -106,7 +102,7 @@ template "#{node['rabbitmq']['config_root']}/rabbitmq-env.conf" do
   owner "root"
   group "root"
   mode 00644
-  notifies :start, "service[#{node['rabbitmq']['service_name']}]"
+#  notifies :start, "service[#{node['rabbitmq']['service_name']}]"
 end
 
 template "#{node['rabbitmq']['config_root']}/rabbitmq.config" do
@@ -114,7 +110,7 @@ template "#{node['rabbitmq']['config_root']}/rabbitmq.config" do
   owner "root"
   group "root"
   mode 00644
-  notifies :start, "service[#{node['rabbitmq']['service_name']}]"
+#  notifies :start, "service[#{node['rabbitmq']['service_name']}]"
 end
 
 if File.exists?(node['rabbitmq']['erlang_cookie_path'])
@@ -137,7 +133,7 @@ if node['rabbitmq']['cluster'] and node['rabbitmq']['erlang_cookie'] != existing
     owner "rabbitmq"
     group "rabbitmq"
     mode 00400
-    notifies :start, "service[#{node['rabbitmq']['service_name']}]"
+#    notifies :start, "service[#{node['rabbitmq']['service_name']}]"
   end
 
 end
@@ -148,14 +144,18 @@ end
 ## when called from chef. The setsid command forces the subprocess into a state
 ## where it can daemonize properly. -Kevin (thanks to Daniel DeLeo for the help)
 
+#service node['rabbitmq']['service_name'] do
+#  #start_command "setsid /etc/init.d/rabbitmq-server start"
+#  #stop_command "setsid /etc/init.d/rabbitmq-server stop"
+#  #restart_command "setsid /etc/init.d/rabbitmq-server restart"
+#  #status_command "setsid /etc/init.d/rabbitmq-server status"
+#  supports :stop => true, :start => true, :status => true, :restart => true
+#  action [ :enable, :start ]
+#  not_if { platform?('smartos') }
+#end
+
 service node['rabbitmq']['service_name'] do
-  #start_command "setsid /etc/init.d/rabbitmq-server start"
-  #stop_command "setsid /etc/init.d/rabbitmq-server stop"
-  #restart_command "setsid /etc/init.d/rabbitmq-server restart"
-  #status_command "setsid /etc/init.d/rabbitmq-server status"
-  supports :status => true, :restart => true
-  action [ :enable, :start ]
-  not_if { platform?('smartos') }
+  action [:enable, :start]
 end
 
 sys_firewall node['rabbitmq']['port']
